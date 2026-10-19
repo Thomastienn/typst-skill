@@ -1,12 +1,12 @@
 # Typst scripting
 
-Patterns here are checked by `assert`s in [examples/scripting.typ](examples/scripting.typ) (Typst 0.14); copy from there.
+Patterns here are `assert`s in [examples/scripting.typ](examples/scripting.typ) (Typst 0.15). Copy from there.
 
 ## Model
 
 - `#` switches markup → code for one expression. `{ .. }` is a code block, `[ .. ]` is a content block; both nest.
 - Blocks return the **join** of every value their statements produce. `let`, `set`, assignments produce nothing. So `for` inside `[..]` emits content each iteration; inside `{..}` it joins values (arrays concatenate, strings concatenate).
-- Values are immutable-by-copy: `let ys = xs; ys.push(1)` does not touch `xs`. Functions are pure; they can't mutate outer variables (use `state` for cross-document data).
+- Values have copy semantics: `let ys = xs; ys.push(1)` does not touch `xs`. Functions are pure; they can't mutate outer variables. Use `state` for values tracked in document layout order.
 - No `null`: use `none`. Missing keys error; use `.at(k, default: ..)`.
 - `str` vs `content`: `"a" + "b"` is `str`; `[a] + [b]` is content. Convert `str(x)`, `[#x]`, `repr(x)` for debugging.
 - Type checks: `type(x) == str`, `type(x) == content`, `type(x) == dictionary`.
@@ -28,12 +28,12 @@ Patterns here are checked by `assert`s in [examples/scripting.typ](examples/scri
 
 ## Standard library you'll use
 
-- Arrays: `len at first last push pop insert remove slice contains find position filter map fold sum product sorted(key:) rev dedup enumerate zip chunks windows flatten join split range(n)`.
-- Dicts: `at insert remove keys values pairs len`, `k in d`.
-- Strings: `len split replace slice trim starts-with ends-with contains find matches(regex(..)) upper lower`, `"x" * 3`.
+- Arrays: `len at first last push pop insert remove slice contains find position filter map fold sum product sorted(key:) sorted(by:)` (0.14 `by:` cmp) `rev dedup enumerate zip chunks windows flatten join split range(n)` / `range(end, inclusive: true)` (0.15). `.first(default:)` / `.last(default:)` / `.join(default:)`.
+- Dicts: `at insert remove keys values pairs len`, 0.15 `map`/`filter` over **values** (`d.map(v => v + 1)`), `k in d`. `in` also checks **module** definitions (0.14).
+- String methods: `len split replace slice trim starts-with ends-with contains find matches(regex(..))`; `"x" * 3`. Case conversion uses functions: `upper("ab")`, `lower("AB")`.
 - `calc`: `abs pow sqrt exp ln log sin cos round(digits:) floor ceil min max rem quo pi e`.
 - `datetime.today()`, `datetime(year:, month:, day:)`, `.display("[day]/[month]/[year]")`.
-- Data files: `csv("a.csv")` (array of rows), `json("a.json")`, `yaml(..)`, `toml(..)`, `read("a.txt")`. Paths resolve relative to the file and must be inside `--root`.
+- Data files: `csv("a.csv")` (array of rows), `json("a.json")`, `yaml(..)`, `toml(..)` (always a dict), `xml(..)` (0.15 namespaces), `read("a.txt")`. 0.15 `path` type: construct in one file, pass into a package, still resolved vs the original file. No `json.decode` — pass `bytes` to `json()`. Paths: `/` only.
 
 ## Documents as code
 
@@ -49,7 +49,7 @@ Patterns here are checked by `assert`s in [examples/scripting.typ](examples/scri
 ```
 
 - Show rule with function: `#show heading.where(level: 2): it => text(blue, it.body)`. Fields: `it.body`, `it.level`, `it.numbering`; inspect with `repr(it)` or `it.fields()`.
-- Selectors: `heading.where(level: 1)`, `figure.where(kind: table)`, `<label>`, `selector(a).or(b)`, `"text"`, `regex("..")`.
+- Selectors: `heading.where(level: 1)`, `figure.where(kind: table)`, `<label>`, `selector(a).or(b)`, `"text"`, `regex("..")`. The [selector reference](https://typst.app/docs/reference/foundations/selector/) documents `selector(emph).within(<label>)` (0.15: descendants of an ancestor). `before`/`after`/`within` work with introspection, not show rules. Many elements are locatable without a label (0.14+: `par`, `table`, `image`, `link`, …).
 - Generate tables: `table(columns: 2, ..rows.flatten().map(v => [#v]))`.
 
 ## Introspection (needs `context`)
@@ -62,5 +62,5 @@ Patterns here are checked by `assert`s in [examples/scripting.typ](examples/scri
 ## CLI hooks
 
 - `typst compile f.typ --input mode=draft` → `sys.inputs.at("mode", default: "final")` (always strings).
-- `typst query f.typ "<label>" --field value` dumps metadata as JSON; pair with `#metadata(x) <label>`.
-- Debug: put `#repr(value)` in the doc, or a failing `assert.eq` to print the actual value.
+- Dump metadata: `typst eval 'query(<meta>).first().value' --in f.typ` (0.15; `typst query` deprecated). Pair with `#metadata(x) <meta>`.
+- Debug: `#repr(value)` in the doc, or a failing `assert.eq`. `panic("msg")` prints the string as-is in 0.15.

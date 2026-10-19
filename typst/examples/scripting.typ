@@ -42,6 +42,9 @@
 #assert.eq(xs.contains(2), true)
 #assert.eq(xs.at(-1), 2)
 #assert.eq(xs.at(9, default: none), none)
+#assert.eq(().first(default: 7), 7)
+#assert.eq(().last(default: 8), 8)
+#assert.eq(().join(default: "x"), "x")
 #assert.eq(("b", "a").join(", "), "b, a")
 #assert.eq(((name: "z", v: 1), (name: "a", v: 2)).sorted(key: d => d.name).first().v, 2)
 #assert.eq(range(4).chunks(2), ((0, 1), (2, 3)))
@@ -64,6 +67,9 @@
 #assert.eq((..d, age: 37).age, 37)
 #assert("age" in d)
 #assert.eq(type((:)), dictionary)
+#assert.eq((a: 1, b: 2).map(v => v + 1), (a: 2, b: 3))
+#assert.eq((a: 1, b: 2).filter(v => v > 1), (b: 2))
+#assert.eq(range(3, inclusive: true), (0, 1, 2, 3))
 
 // Strings
 #let s = "Hello, World"
@@ -72,6 +78,7 @@
 #assert.eq(s.slice(0, 5), "Hello")
 #assert.eq(s.starts-with("He"), true)
 #assert.eq(upper("ab"), "AB")
+#assert.eq(lower("AB"), "ab")
 #assert.eq("a1b22".matches(regex("\d+")).map(m => m.text), ("1", "22"))
 #assert.eq("x" * 3, "xxx")
 
@@ -109,6 +116,7 @@
 == Blue level-2 heading
 
 // State, counters, query (need context)
+#context assert.eq(target(), "paged")
 #let mood = state("mood", "ok")
 #mood.update("great")
 #context assert.eq(mood.get(), "great")
@@ -118,7 +126,10 @@
 #context assert.eq(query(heading).len(), 1)
 #mood.update(old => old + "!")
 #context assert.eq(mood.final(), "great!")
-#metadata((a: 1)) <meta> // typst query scripting.typ "<meta>" --field value
+#metadata((a: 1)) <meta> // typst eval 'query(<meta>).first().value' --in scripting.typ
+
+#block[_one_ and _two_] <local-emphasis>
+#context assert.eq(query(selector(emph).within(<local-emphasis>)).len(), 2)
 
 // CLI inputs: typst compile f.typ --input mode=draft
 #let mode = sys.inputs.at("mode", default: "final")

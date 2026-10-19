@@ -1,6 +1,14 @@
 # Drawing, plots, diagrams
 
-All snippets below are in [examples/graphs.typ](examples/graphs.typ) and compile. Always render to PNG and look before handing back.
+Compiled: [examples/graphs.typ](examples/graphs.typ). Render PNG and look before handing back. Built-in shapes (`curve`, `tiling`): [layout.md](layout.md). Domain diagrams (circuits, automata, venn): [specialized.md](specialized.md).
+
+| Need | Package |
+|---|---|
+| Free drawing, geometry, TikZ-style | `@preview/cetz:0.5.2` |
+| Plot `y = f(x)` inside CeTZ | `@preview/cetz-plot:0.1.4` |
+| Data plots (matplotlib-like) | `@preview/lilaq:0.6.0` |
+| Flowcharts, automata, commutative diagrams | `@preview/fletcher:0.5.8` |
+| Graphviz DOT | `@preview/diagraph:0.3.7` |
 
 ## CeTZ (free drawing, TikZ-like)
 
@@ -28,6 +36,7 @@ All snippets below are in [examples/graphs.typ](examples/graphs.typ) and compile
 ## cetz-plot (function plots in a CeTZ canvas)
 
 ```typ
+#import "@preview/cetz:0.5.2"
 #import "@preview/cetz-plot:0.1.4": plot
 #cetz.canvas({
   plot.plot(size: (8, 4), x-tick-step: 1, x-label: $x$, y-label: $y$, legend: "inner-north-east", {
@@ -73,9 +82,20 @@ All snippets below are in [examples/graphs.typ](examples/graphs.typ) and compile
 ```
 
 - Arrow marks: `"->"`, `"-|>"`, `"=>"`, `"<->"`, `"--"` (dashed), `"..>"` (dotted), `"hook->"`, `"->>"`.
-- Commutative diagrams in math: `$ A edge(f, ->) & B \ C & D $` with `"d"`, `"r"` etc. for direction.
+- Commutative diagrams: `#diagram($ A edge(f, ->) & B \ C & D $)` with `"d"`, `"r"` etc. for direction. Math-mode `edge` calls need the `diagram` wrapper.
 - Automata: accept state `extrude: (-2.5, 0)`, self-loop `edge((0,0), (0,0), "-|>", bend: 130deg)`.
 - Shapes: `fletcher.shapes.{rect, circle, pill, diamond, hexagon, parallelogram}`.
+
+## Graphviz
+
+```typ
+#import "@preview/diagraph:0.3.7": raw-render
+#raw-render(```dot
+digraph G { rankdir=LR; A -> B [label="f"] }
+```)
+```
+
+Also `render("digraph { a -> b }")`. Needs no system Graphviz (WASM).
 
 ## Gotchas
 
@@ -84,3 +104,4 @@ All snippets below are in [examples/graphs.typ](examples/graphs.typ) and compile
 - Center a canvas: wrap in `#align(center)[..]` or put in `#figure(..)` to get a caption/number.
 - Packages pin their own CeTZ version (fletcher uses 0.3.x); mixing them in one document is fine, but draw inside `cetz.canvas` with the `cetz` you imported.
 - Log axes can't show 0: bars/fills with base 0 break `xscale: "log"`.
+- 0.15: `path`/`pattern` removed. Use `curve`/`tiling` (see [layout.md](layout.md)).

@@ -1,5 +1,5 @@
 // Lecture/study notes template. Copy, change the header, write.
-#import "@preview/theorion:0.5.0": *
+#import "@preview/theorion:0.6.0": *
 #import cosmos.fancy: *
 #show: show-theorion
 

@@ -1,6 +1,6 @@
 # LaTeX → Typst
 
-Verified against Typst 0.14. Compiled examples: [examples/math.typ](examples/math.typ).
+Verified against Typst 0.15. Compiled: [examples/math.typ](examples/math.typ).
 
 ## Document structure
 
@@ -32,7 +32,10 @@ Verified against Typst 0.14. Compiled examples: [examples/math.typ](examples/mat
 | `tikz` | `@preview/cetz` (see drawing.md) |
 | `pgfplots` | `@preview/lilaq` or `@preview/cetz-plot` |
 | `tikz-cd` | `@preview/fletcher` |
-| `siunitx` `\SI{3}{m/s}` | `$3 "m"/"s"$` or `@preview/unify:0.7.1` |
+| `siunitx` `\SI{3}{m/s}` | `$3 "m"/"s"$` or `@preview/unify:0.8.1` / `zero:0.7.1` |
+| `beamer` | `@preview/touying:0.8.0` (see [slides.md](slides.md)) |
+| `\href` | `#link("url")[text]` |
+| `\includepdf` | `#image("a.pdf", page: n)` (0.14+) |
 | `\LaTeX` | `#"LaTeX"` (no logo built in) |
 
 ## Math syntax
@@ -62,7 +65,8 @@ Verified against Typst 0.14. Compiled examples: [examples/math.typ](examples/mat
 | `\stackrel{def}{=}` | `eq.def` or `stretch(=)^"def"` |
 | `\cancel{x}` | `cancel(x)` |
 | `\quad` `\qquad` `\,` | `quad` `wide` `thin` |
-| `\tag{*}` / `\nonumber` | use labels; unnumbered: `#math.equation(block: true, numbering: none, $ .. $)` |
+| `\tag{*}` | `#math.equation(block: true, numbering: _ => "(*)", $x^2$)`; add a label separately for refs |
+| `\nonumber` | `#math.equation(block: true, numbering: none, $x^2$)` |
 
 ## Symbols
 
@@ -81,6 +85,8 @@ Verified against Typst 0.14. Compiled examples: [examples/math.typ](examples/mat
 | `\wedge` `\vee` `\neg` | `and` `or` `not` | `\perp` `\parallel` | `perp` `parallel` |
 | `\varphi` `\varepsilon` | `phi.alt` `epsilon.alt` | `\iint` `\oint` | `integral.double` `integral.cont` |
 
-0.14 deprecations to avoid: `sect` → `inter`, `angle.l/r` → `chevron.l/r`, `planck.reduce` → `planck`.
+Removed in 0.15 (error, not warning): `sect`, `angle.l/r`, `planck.reduce`. Use `inter`, `chevron.l/r`, `planck`.
+
+Math options: `frac.with(style: "horizontal" | "skewed")`, `#math.equation(alt: "description", $x^2$)`, `scr(A)` (script/roundhand). See the [equation reference](https://typst.app/docs/reference/math/equation/). Pasting a whole LaTeX equation: `mitex` (see [specialized.md](specialized.md)); prefer native math.
 
 Unknown symbol? Search https://typst.app/docs/reference/symbols/sym/ or just paste the Unicode character.

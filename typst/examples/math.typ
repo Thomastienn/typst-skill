@@ -25,3 +25,7 @@ $ op("argmax")_(theta) cal(L)(theta), quad binom(n, k), quad upright(d) x $
 $ dv(f, x), quad pdv(f, x, y), quad braket(psi, phi), quad grad dot vb(E) = rho / epsilon_0 $
 
 Ref: @gauss.
+
+// A custom equation tag is separate from the label used for references.
+#math.equation(block: true, numbering: _ => "(*)", $x^2$) <eq:star>
+Custom tag: @eq:star.

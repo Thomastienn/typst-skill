@@ -3,6 +3,7 @@
 #import "@preview/cetz-plot:0.1.4": plot
 #import "@preview/lilaq:0.6.0" as lq
 #import "@preview/fletcher:0.5.8" as fletcher: diagram, node, edge
+#import "@preview/diagraph:0.3.7": raw-render
 #set page(width: 16cm, height: auto, margin: 1cm)
 
 = CeTZ: free drawing (TikZ-like)
@@ -63,3 +64,8 @@ $)
   edge((0, 0), (0, 0), $b$, "-|>", bend: 130deg),
   node((1, 0), $q_1$, radius: 1em, extrude: (-2.5, 0)),
 )
+
+= Graphviz (diagraph)
+#raw-render(```dot
+digraph G { rankdir=LR; A -> B [label="f"]; B -> C }
+```)
