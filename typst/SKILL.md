@@ -1,6 +1,6 @@
 ---
 name: typst
-description: Write, edit, debug and convert Typst (.typ) documents — notes, math, figures, tables, CeTZ drawings, plots (cetz-plot, lilaq), diagrams (fletcher), and LaTeX-to-Typst translation. Use when the user mentions Typst, .typ files, typst compile/watch, wants notes or a document "like LaTeX", or asks to draw graphs, plots, or diagrams in Typst.
+description: Write, edit, debug and convert Typst (.typ) documents — scripting (functions, loops, templates, show rules, state), notes, math, figures, tables, CeTZ drawings, plots (cetz-plot, lilaq), diagrams (fletcher), and LaTeX-to-Typst translation. Use when the user mentions Typst, .typ files, typst compile/watch, wants notes or a document "like LaTeX", or asks to draw graphs, plots, or diagrams in Typst.
 ---
 
 # Typst
@@ -37,6 +37,8 @@ Never hand back Typst that hasn't compiled.
 | Bibliography | `#bibliography("refs.bib")`, cite with `@key` |
 
 Partial application: `#let tip = callout.with("Tip", color: green)`.
+
+Writing real code (loops, arrays/dicts, closures, templates, show-rule functions, state/counters/query, data files, `sys.inputs`): see [scripting.md](scripting.md). Patterns there are tested asserts in [examples/scripting.typ](examples/scripting.typ).
 
 ## Math essentials
 
